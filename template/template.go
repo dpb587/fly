@@ -9,6 +9,7 @@ import (
 )
 
 var templateFormatRegex = regexp.MustCompile(`\{\{([-\w\p{L}]+)\}\}`)
+var jsonStripQuoteRegex = regexp.MustCompile(`^"(.+)"$`)
 
 func Evaluate(content []byte, variables Variables) ([]byte, error) {
 	var variableErrors error
@@ -24,6 +25,6 @@ func Evaluate(content []byte, variables Variables) ([]byte, error) {
 
 		saveValue, _ := json.Marshal(value)
 
-		return []byte(saveValue)
+		return []byte(jsonStripQuoteRegex.ReplaceAllString(string(saveValue), "$1"))
 	}), variableErrors
 }
